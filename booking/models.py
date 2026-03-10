@@ -51,7 +51,7 @@ class Route(models.Model):
     origin = models.CharField(max_length=100)
     destination = models.CharField(max_length=100)
     departure_time = models.DateTimeField()
-    price = models.DecimalField(max_digits=8, decimal_places=1)
+    price = models.DecimalField(max_digits=8, decimal_places=0)
     bus = models.ForeignKey(Bus, on_delete=models.CASCADE)
     
     def __str__(self):
