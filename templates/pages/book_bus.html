@@ -1,78 +1,528 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Book Bus</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TiC BUS · complete booking</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
 
-<style>
+    body {
+      background: #f4f7fc;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-body{
-font-family: Arial;
-background:#f4f4f4;
-}
+    .dashboard {
+      max-width: 1300px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      width: 95%;
+    }
 
-.booking-box{
-width:400px;
-margin:80px auto;
-padding:30px;
-background:white;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
-border-radius:10px;
-}
+    /* header exactly from original (TiC BUS style) */
+    .greeting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+      background: white;
+      padding: 1.2rem 2rem;
+      border-radius: 60px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.03), 0 0 0 1px rgba(22,23,49,0.05);
+    }
+    .greeting h1 {
+      font-weight: 600;
+      font-size: 1.9rem;
+      letter-spacing: -0.01em;
+    }
+    .greeting h1 .tic {
+      font-size: 2.2rem;
+      color: aquamarine;
+      text-shadow: 0 2px 5px rgba(127,255,212,0.2);
+    }
+    .greeting h1 .bus {
+      font-size: 2.2rem;
+      color: skyblue;
+      text-shadow: 0 2px 5px rgba(135,206,235,0.3);
+    }
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: rgb(22, 23, 49);
+      color: white;
+      padding: 0.5rem 1.8rem 0.5rem 1.2rem;
+      border-radius: 50px;
+      box-shadow: 0 6px 12px rgba(22,23,49,0.25);
+    }
+    .user-profile i {
+      font-size: 1.8rem;
+      color: aquamarine;
+    }
+    .user-profile .user-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .user-profile .name {
+      font-weight: 600;
+    }
+    .user-profile .badge {
+      background: #2f3a6b;
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
+      font-size: 0.7rem;
+    }
 
-.booking-box h2{
-text-align:center;
-color:rgb(22,23,49);
-}
+    /* main booking card - split layout like original .submit */
+    .booking-split {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    @media (max-width: 800px) {
+      .booking-split {
+        grid-template-columns: 1fr;
+      }
+    }
 
-.booking-box input{
-width:100%;
-padding:12px;
-margin:10px 0;
-border-radius:6px;
-border:1px solid #ccc;
-}
+    /* left side: booking form (white card) */
+    .booking-card {
+      background: white;
+      border-radius: 48px;
+      padding: 2.2rem 2.2rem;
+      box-shadow: 0 20px 35px -12px rgba(22,23,49,0.15);
+      border: 1px solid rgba(22,23,49,0.05);
+    }
 
-.booking-box button{
-width:100%;
-padding:12px;
-background:rgb(22,23,49);
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
+    .route-summary {
+      background: #f0f4fa;
+      border-radius: 40px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid #d9e2ef;
+    }
+    .route-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: rgb(22,23,49);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+    .route-title i {
+      color: aquamarine;
+      background: #16173110;
+      padding: 10px;
+      border-radius: 50%;
+    }
+    .route-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem 3rem;
+      margin-top: 1rem;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+    }
+    .meta-item i {
+      color: skyblue;
+      width: 24px;
+      font-size: 1.3rem;
+    }
+    .meta-item strong {
+      color: rgb(22,23,49);
+    }
 
-.booking-box button:hover{
-background:skyblue;
-}
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, aquamarine, skyblue, transparent);
+      margin: 1.8rem 0;
+    }
 
-</style>
+    .form-group {
+      margin-bottom: 1.8rem;
+    }
+    .form-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: rgb(22,23,49);
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+    }
+    .form-group label i {
+      color: aquamarine;
+    }
+    .form-control {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      font-size: 1.1rem;
+      border: 2px solid #e2e8f2;
+      border-radius: 60px;
+      outline: none;
+      transition: all 0.2s;
+      background: #f9fcff;
+    }
+    .form-control:focus {
+      border-color: rgb(22,23,49);
+      box-shadow: 0 0 0 3px rgba(22,23,49,0.1);
+    }
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23222' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1.5rem center;
+      background-size: 1.2rem;
+    }
 
+    .seat-hint {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 0.5rem;
+      color: #5f6c84;
+      font-size: 0.95rem;
+    }
+    .seat-hint i {
+      color: skyblue;
+    }
+
+    .btn-book {
+      width: 100%;
+      background: rgb(22,23,49);
+      color: white;
+      border: none;
+      padding: 1.2rem;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 2px solid transparent;
+      margin-top: 1rem;
+    }
+    .btn-book:hover {
+      background: transparent;
+      color: rgb(22,23,49);
+      border-color: rgb(22,23,49);
+    }
+    .btn-book:hover i {
+      color: skyblue;
+    }
+    .btn-book i {
+      color: aquamarine;
+      font-size: 1.5rem;
+    }
+
+    /* right panel: dark summary (like original .left) */
+    .summary-panel {
+      background: rgb(22, 23, 49);
+      border-radius: 48px;
+      padding: 2.2rem 2rem;
+      color: white;
+      box-shadow: 0 25px 40px -14px rgba(22,23,49,0.6);
+      height: fit-content;
+    }
+
+    .summary-panel h3 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+    }
+    .summary-panel h3 i {
+      color: aquamarine;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 1rem 0;
+      border-bottom: 1px solid #2f3b68;
+    }
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    .info-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: skyblue;
+    }
+    .info-content {
+      flex: 1;
+    }
+    .info-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+    .info-value {
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .info-value i {
+      color: aquamarine;
+    }
+
+    .price-tag {
+      background: rgba(127,255,212,0.15);
+      border-radius: 60px;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 1.8rem 0;
+      border: 1px solid aquamarine;
+    }
+    .price-tag span:first-child {
+      font-size: 1.1rem;
+    }
+    .price-tag .final-price {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: aquamarine;
+    }
+
+    .note {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #1c254a;
+      border-radius: 40px;
+      padding: 1rem 1.5rem;
+      font-size: 0.95rem;
+      margin-top: 1rem;
+    }
+    .note i {
+      color: skyblue;
+      font-size: 1.2rem;
+    }
+
+    /* bottom CTA (same style) */
+    .bottom-cta {
+      margin-top: 2.5rem;
+      background: white;
+      border-radius: 80px;
+      padding: 1.3rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border: 1px solid rgba(22,23,49,0.08);
+    }
+    .bottom-cta p {
+      font-size: 1.2rem;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgb(22,23,49);
+    }
+    .bottom-cta p i {
+      color: aquamarine;
+      font-size: 2.2rem;
+    }
+    .cta-btn {
+      background: rgb(22,23,49);
+      color: white;
+      border: none;
+      padding: 0.7rem 2.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 2px solid transparent;
+    }
+    .cta-btn:hover {
+      background: transparent;
+      color: rgb(22,23,49);
+      border-color: rgb(22,23,49);
+    }
+    .cta-btn i {
+      color: skyblue;
+    }
+
+    .footer-note {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: #6f7c94;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+    }
+  </style>
 </head>
-
 <body>
+<div class="dashboard">
 
-<div class="booking-box">
+  <!-- header – same as dashboards -->
+  <div class="greeting">
+    <h1>
+      <span class="tic">T.I.C</span><span class="bus">BUS</span> · secure booking
+    </h1>
+    <div class="user-profile">
+      <i class="fas fa-user-lock"></i>
+      <div class="user-text">
+        <span class="name">{{ request.user.username|default:"Alex Chen" }}</span>
+      </div>
+    </div>
+  </div>
 
-<h2>Book Bus</h2>
+  <!-- BOOKING FORM – matches your Django view: route, bus, seat_number -->
+  <form method="post" action="">
+    {% csrf_token %}
+    <!-- split panel: left form, right summary -->
+    <div class="booking-split">
+      <!-- LEFT: booking card (white) -->
+      <div class="booking-card">
+        <div class="route-summary">
+          <div class="route-title">
+            <i class="fas fa-bus"></i> {{ route.origin|default:"Downtown" }} → {{ route.destination|default:"North Beach" }}
+          </div>
+          <div class="route-meta">
+            <div class="meta-item"><i class="fas fa-clock"></i> Departure: <strong>{{ route.departure_time|default:"09:30" }}</strong></div>
+            <div class="meta-item"><i class="fas fa-stopwatch"></i> Duration: <strong>{{ route.duration|default:"35 min" }}</strong></div>
+            <div class="meta-item"><i class="fas fa-bus-simple"></i> Bus: <strong>{{ bus.bus_number|default:"CE-12" }} · {{ bus.model|default:"Volvo" }}</strong></div>
+          </div>
+        </div>
 
-<p><strong>Route:</strong> {{ route.origin }} → {{ route.destination }}</p>
+        <div class="divider"></div>
 
-<p><strong>Price:</strong> {{ route.price }} FCFA</p>
+        <!-- seat selection field (exactly seat_number from POST) -->
+        <div class="form-group">
+          <label><i class="fas fa-chair"></i> Choose your seat</label>
+          <select name="seat_number" class="form-control" required>
+            <option value="" disabled selected>– select a seat –</option>
+            <option value="1A">1A (window) - ${{ route.price|default:"12" }}</option>
+            <option value="1B">1B (aisle) - ${{ route.price|default:"12" }}</option>
+            <option value="2A">2A (window) - ${{ route.price|default:"12" }}</option>
+            <option value="2B">2B (aisle) - ${{ route.price|default:"12" }}</option>
+            <option value="3A">3A (extra legroom) - ${{ route.price|default:"15" }}</option>
+            <option value="3B">3B (extra legroom) - ${{ route.price|default:"15" }}</option>
+            <option value="4C">4C (center) - ${{ route.price|default:"12" }}</option>
+            <option value="5A">5A (window) - ${{ route.price|default:"12" }}</option>
+          </select>
+          <div class="seat-hint">
+            <i class="fas fa-info-circle"></i> <span>You can select any available seat. Extra legroom seats may cost more.</span>
+          </div>
+        </div>
 
-<p><strong>Bus:</strong> {{ bus.name }}</p>
+        <!-- optional: extra passenger info (you can keep minimal) -->
+        <div class="form-group">
+          <label><i class="fas fa-user"></i> Passenger name (optional)</label>
+          <input type="text" class="form-control" placeholder="Leave empty to use profile name" value="{{ request.user.get_full_name|default:request.user.username }}">
+          <small style="color:#5f6c84; margin-left: 1rem;">Will be used for ticket</small>
+        </div>
 
-<form method="POST">
+        <!-- book button (triggers POST) -->
+        <button type="submit" class="btn-book">
+          <i class="fas fa-ticket-alt"></i> confirm booking
+        </button>
+      </div>
 
-{% csrf_token %}
+      <!-- RIGHT panel: dark summary (like .left) -->
+      <div class="summary-panel">
+        <h3><i class="fas fa-receipt"></i> trip summary</h3>
 
-<input type="number" name="seat_number" placeholder="Enter Seat Number" required>
+        <div class="info-row">
+          <div class="info-icon"><i class="fas fa-map-pin"></i></div>
+          <div class="info-content">
+            <div class="info-label">route</div>
+            <div class="info-value">{{ route.origin|default:"Downtown" }} <i class="fas fa-arrow-right"></i> {{ route.destination|default:"North Beach" }}</div>
+          </div>
+        </div>
 
-<button type="submit">Confirm Booking</button>
+        <div class="info-row">
+          <div class="info-icon"><i class="fas fa-calendar"></i></div>
+          <div class="info-content">
+            <div class="info-label">departure</div>
+            <div class="info-value">{{ route.departure_time }}</div>
+          </div>
+        </div>
 
-</form>
+        <div class="info-row">
+          <div class="info-icon"><i class="fas fa-bus"></i></div>
+          <div class="info-content">
+            <div class="info-label">bus operator</div>
+            <div class="info-value">{{ bus.agency|default:"City Express" }} · {{ bus.bus_number|default:"CE-12" }}</div>
+          </div>
+        </div>
+
+        <div class="price-tag">
+          <span>total fare</span>
+          <span class="final-price">{{ route.price|default:"12" }} XAF</span>
+        </div>
+
+        <div class="note">
+          <i class="fas fa-shield-alt"></i>
+          <span>Your seat is reserved instantly after booking. You can cancel up to 30min before departure.</span>
+        </div>
+
+        <!-- extra: reminder of "remember me" style but adapted -->
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 2rem; background: #1a234a; border-radius: 60px; padding: 0.8rem 1.5rem;">
+          <input type="checkbox" id="terms" style="width: 20px; height: 20px; accent-color: aquamarine;" checked>
+          <label for="terms" style="color: white; font-size:0.9rem;">I agree to the terms & cancellation policy</label>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- bottom CTA (similar to signup but for help) -->
+  <div class="bottom-cta">
+    <p>
+      <i class="fas fa-headset"></i>
+      Questions about your trip? We're here 24/7.
+    </p>
+    <a href="#" class="cta-btn">
+      <i class="fas fa-message"></i> support
+    </a>
+  </div>
+
+  <div class="footer-note">
+    <span><i class="fas fa-lock" style="color: skyblue;"></i> secure payment</span>
+    <span><i class="fas fa-chair" style="color: aquamarine;"></i> seats assigned instantly</span>
+  </div>
 
 </div>
-
 </body>
 </html>
