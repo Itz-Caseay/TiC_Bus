@@ -1,0 +1,26 @@
+from previous stuff you've done use this @login_required(login_url='login')
+def book_bus(request, route_id):
+
+    route = get_object_or_404(Route, id=route_id)
+
+    bus = route.bus
+
+    if request.method == "POST":
+
+        seat_number = request.POST.get("seat_number")
+
+        Booking.objects.create(
+            user=request.user,
+            route=route,
+            bus=bus,
+            seat_number=seat_number
+        )
+
+        return redirect("dashboard")
+
+    context = {
+        "route": route,
+        "bus": bus
+    }
+
+    return render(request, "pages/book_bus.html", context) to create a booking page using the same color

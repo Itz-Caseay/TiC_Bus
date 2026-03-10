@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate, logout
-from .forms import BookingForm
+# from .forms import BookingForm
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from .models import User, UserProfile, Agency, Bus, Route, Booking
@@ -106,23 +106,23 @@ def logout_user(request):
     return redirect('login')
 
 
-@login_required(login_url='login')
-def book_ticket(request, route_id):
-    route = get_object_or_404(Route, id=route_id)
+# @login_required(login_url='login')
+# def book_ticket(request, route_id):
+#     route = get_object_or_404(Route, id=route_id)
 
-    if request.method == 'POST':
-        form = BookingForm(request.POST)
-        if form.is_valid():
-            booking = form.save(commit=False)
-            booking.user = request.user
-            booking.route = route
-            booking.save()
-            return redirect('my_bookings')
+#     if request.method == 'POST':
+#         form = BookingForm(request.POST)
+#         if form.is_valid():
+#             booking = form.save(commit=False)
+#             booking.user = request.user
+#             booking.route = route
+#             booking.save()
+#             return redirect('my_bookings')
 
-    else:
-        form = BookingForm()
+#     else:
+#         form = BookingForm()
 
-    return render(request, 'pages/book_ticket.html', {'form': form, 'route': route})
+#     return render(request, 'pages/book_ticket.html', {'form': form, 'route': route})
 
 
 @login_required(login_url='login')
@@ -130,3 +130,29 @@ def my_bookings(request):
     bookings = Booking.objects.filter(user=request.user)
     return render(request, 'pages/my_bookings.html', {'bookings': bookings})
 
+@login_required(login_url='login')
+def book_bus(request, route_id):
+
+    route = get_object_or_404(Route, id=route_id)
+
+    bus = route.bus
+
+    if request.method == "POST":
+
+        seat_number = request.POST.get("seat_number")
+
+        Booking.objects.create(
+            user=request.user,
+            route=route,
+            bus=bus,
+            seat_number=seat_number
+        )
+
+        return redirect("dashboard")
+
+    context = {
+        "route": route,
+        "bus": bus
+    }
+
+    return render(request, "pages/book_bus.html", context)
