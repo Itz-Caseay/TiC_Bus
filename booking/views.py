@@ -10,22 +10,26 @@ from django.contrib import messages
 # Create your views here.
 @login_required(login_url='login')
 def index(request):
+
     total_agencies = Agency.objects.count()
     total_buses = Bus.objects.count()
     total_bookings = Booking.objects.count()
     total_destinations = Route.objects.count()
 
-    # Annotate bus count for each agency
-    agencies = Agency.objects.annotate(unique_agency_total_bus=Count('buses'))
+    # Count buses and routes for each agency
+    agencies = Agency.objects.annotate(
+        unique_agency_total_bus=Count('buses'),
+        total_routes=Count('buses__route')
+    )
 
     context = {
         'total_agencies': total_agencies,
         'total_buses': total_buses,
         'total_destinations': total_destinations,
         'total_bookings': total_bookings,
-        'agencies': agencies
+        'agencies': agencies,
     }
-    
+
     return render(request, 'pages/index.html', context)
 
 def agency_detail(request, agency_id):

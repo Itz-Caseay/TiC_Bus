@@ -50,7 +50,7 @@ class Bus(models.Model):
 class Route(models.Model):
     origin = models.CharField(max_length=100)
     destination = models.CharField(max_length=100)
-    departure_time = models.DateTimeField()
+    departure_time = models.TimeField()
     price = models.DecimalField(max_digits=8, decimal_places=0)
     bus = models.ForeignKey(Bus, on_delete=models.CASCADE)
     
