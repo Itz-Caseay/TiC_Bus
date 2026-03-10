@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TiC BUS · your ticket</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
+
+    body {
+      background: #f4f7fc;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dashboard {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      width: 95%;
+    }
+
+    /* header exactly from original (TiC BUS style) */
+    .greeting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+      background: white;
+      padding: 1.2rem 2rem;
+      border-radius: 60px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.03), 0 0 0 1px rgba(22,23,49,0.05);
+    }
+    .greeting h1 {
+      font-weight: 600;
+      font-size: 1.9rem;
+      letter-spacing: -0.01em;
+    }
+    .greeting h1 .tic {
+      font-size: 2.2rem;
+      color: aquamarine;
+      text-shadow: 0 2px 5px rgba(127,255,212,0.2);
+    }
+    .greeting h1 .bus {
+      font-size: 2.2rem;
+      color: skyblue;
+      text-shadow: 0 2px 5px rgba(135,206,235,0.3);
+    }
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: rgb(22, 23, 49);
+      color: white;
+      padding: 0.5rem 1.8rem 0.5rem 1.2rem;
+      border-radius: 50px;
+      box-shadow: 0 6px 12px rgba(22,23,49,0.25);
+    }
+    .user-profile i {
+      font-size: 1.8rem;
+      color: aquamarine;
+    }
+    .user-profile .user-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .user-profile .name {
+      font-weight: 600;
+    }
+    .user-profile .badge {
+      background: #2f3a6b;
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
+      font-size: 0.7rem;
+    }
+
+    /* ticket container – uses split inspiration but merged as elegant card */
+    .ticket-wrapper {
+      background: white;
+      border-radius: 60px;
+      padding: 2.5rem 2.5rem;
+      box-shadow: 0 30px 45px -20px rgba(22,23,49,0.3);
+      border: 1px solid rgba(22,23,49,0.05);
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ticket perforation style (subtle) */
+    .ticket-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 30%;
+      width: 2px;
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 8px, #d9e2ef 8px, #d9e2ef 16px);
+      opacity: 0.5;
+    }
+
+    .ticket-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .ticket-header h2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: rgb(22,23,49);
+    }
+    .ticket-header h2 i {
+      color: aquamarine;
+      background: #16173110;
+      padding: 12px;
+      border-radius: 50%;
+    }
+    .ticket-status {
+      background: #dcfce7;
+      color: #166534;
+      padding: 0.6rem 2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+    }
+
+    /* route main line */
+    .journey {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 2.5rem 0 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .location {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 180px;
+    }
+    .location .city {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: rgb(22,23,49);
+      line-height: 1.2;
+    }
+    .location .time {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1.2rem;
+      color: #5f6c84;
+      margin-top: 5px;
+    }
+    .location .time i {
+      color: skyblue;
+    }
+    .journey-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: aquamarine;
+      font-size: 2rem;
+    }
+    .journey-arrow i {
+      background: #16173110;
+      padding: 10px;
+      border-radius: 50%;
+    }
+    .journey-arrow span {
+      font-size: 0.9rem;
+      color: #6f7c94;
+      margin-top: 4px;
+    }
+
+    /* ticket details grid */
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.8rem;
+      margin: 2.5rem 0 1.8rem;
+      background: #f0f6fe;
+      border-radius: 50px;
+      padding: 2rem 2rem;
+    }
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .detail-icon {
+      background: white;
+      width: 54px;
+      height: 54px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: rgb(22,23,49);
+      box-shadow: 0 8px 14px rgba(0,0,0,0.03);
+    }
+    .detail-icon i {
+      color: aquamarine;
+    }
+    .detail-content {
+      flex: 1;
+    }
+    .detail-label {
+      font-size: 0.85rem;
+      color: #6f7c94;
+      margin-bottom: 4px;
+    }
+    .detail-value {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: rgb(22,23,49);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .detail-value small {
+      font-weight: normal;
+      font-size: 0.9rem;
+      color: #5f6c84;
+    }
+
+    /* barcode / qr section (visual only) */
+    .ticket-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 2px dashed #cbd5e1;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .barcode {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .barcode i {
+      font-size: 3rem;
+      color: rgb(22,23,49);
+      opacity: 0.3;
+    }
+    .barcode .code {
+      font-family: monospace;
+      letter-spacing: 4px;
+      font-size: 1.4rem;
+      color: #334155;
+      background: #f1f5f9;
+      padding: 0.4rem 1.2rem;
+      border-radius: 60px;
+    }
+    .print-btn {
+      background: rgb(22,23,49);
+      color: white;
+      border: none;
+      padding: 0.8rem 2.5rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 2px solid transparent;
+    }
+    .print-btn:hover {
+      background: transparent;
+      color: rgb(22,23,49);
+      border-color: rgb(22,23,49);
+    }
+    .print-btn:hover i {
+      color: skyblue;
+    }
+    .print-btn i {
+      color: aquamarine;
+    }
+
+    /* bottom actions (like signup style) */
+    .bottom-cta {
+      margin-top: 2rem;
+      background: white;
+      border-radius: 80px;
+      padding: 1.3rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border: 1px solid rgba(22,23,49,0.08);
+    }
+    .bottom-cta p {
+      font-size: 1.2rem;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgb(22,23,49);
+    }
+    .bottom-cta p i {
+      color: aquamarine;
+      font-size: 2rem;
+    }
+    .cta-btn {
+      background: rgb(22,23,49);
+      color: white;
+      border: none;
+      padding: 0.7rem 2.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 2px solid transparent;
+    }
+    .cta-btn:hover {
+      background: transparent;
+      color: rgb(22,23,49);
+      border-color: rgb(22,23,49);
+    }
+    .cta-btn i {
+      color: skyblue;
+    }
+
+    .footer-note {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: #6f7c94;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+    }
+  </style>
+</head>
+<body>
+<div class="dashboard">
+
+  <!-- header with user -->
+  <div class="greeting">
+    <h1>
+      <span class="tic">T.I.C</span><span class="bus">BUS</span> · e-ticket
+    </h1>
+    <div class="user-profile">
+      <i class="fas fa-circle-check"></i>
+      <div class="user-text">
+        <span class="name">{{ request.user.username|default:"Alex Chen" }}</span>
+        <span class="badge"><i class="fa-regular fa-credit-card"></i> booking confirmed</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN TICKET CARD (after reservation) -->
+  <div class="ticket-wrapper">
+    <div class="ticket-header">
+      <h2><i class="fas fa-ticket"></i> boarding pass</h2>
+      <div class="ticket-status"><i class="fas fa-check-circle"></i> confirmed</div>
+    </div>
+
+    <!-- journey: from → to -->
+    <div class="journey">
+      <div class="location">
+        <div class="city">{{ route.origin|default:"Downtown" }}</div>
+        <div class="time"><i class="fas fa-clock"></i> {{ route.departure_time|default:"09:30" }} · {{ route.departure_date|default:"May 28, 2026" }}</div>
+      </div>
+      <div class="journey-arrow">
+        <i class="fas fa-bus"></i>
+        <span>{{ route.duration|default:"35 min" }}</span>
+      </div>
+      <div class="location" style="align-items: flex-end;">
+        <div class="city">{{ route.destination|default:"North Beach" }}</div>
+        <div class="time"><i class="fas fa-clock"></i> {{ route.arrival_time|default:"10:05" }}</div>
+      </div>
+    </div>
+
+    <!-- details grid: passenger, seat, bus, price, booking ref -->
+    <div class="details-grid">
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-user"></i></div>
+        <div class="detail-content">
+          <div class="detail-label">passenger</div>
+          <div class="detail-value">{{ request.user.get_full_name|default:"Alex Chen" }}</div>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-chair"></i></div>
+        <div class="detail-content">
+          <div class="detail-label">seat</div>
+          <div class="detail-value">{{ booking.seat_number|default:"3A" }} <small>window</small></div>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-bus"></i></div>
+        <div class="detail-content">
+          <div class="detail-label">bus / operator</div>
+          <div class="detail-value">{{ bus.bus_number|default:"CE-12" }} · {{ bus.agency|default:"City Express" }}</div>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-tag"></i></div>
+        <div class="detail-content">
+          <div class="detail-label">price paid</div>
+          <div class="detail-value">${{ route.price|default:"12.00" }}</div>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-hashtag"></i></div>
+        <div class="detail-content">
+          <div class="detail-label">booking ref</div>
+          <div class="detail-value">TIC-{{ booking.id|default:"8274" }} <i class="fas fa-copy" style="color:skyblue; font-size: 1rem; cursor:pointer;"></i></div>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-qrcode"></i></div>
+        <div class="detail-content">
+          <div class="detail-label">scan code</div>
+          <div class="detail-value"><i class="fas fa-square" style="color: #1e293b; letter-spacing: 2px;">▮▮▮▮▮</i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- footer: fake barcode + print -->
+    <div class="ticket-footer">
+      <div class="barcode">
+        <i class="fas fa-barcode"></i>
+        <span class="code">{{ booking.barcode|default:"*TIC7 3B9K 2R4*" }}</span>
+      </div>
+      <button class="print-btn" onclick="window.print()"><i class="fas fa-print"></i> print ticket</button>
+    </div>
+
+    <!-- extra note (like remember me style) -->
+    <div style="display: flex; align-items: center; gap: 10px; margin-top: 1.5rem; background: #f2f7ff; padding: 0.8rem 1.8rem; border-radius: 60px; width: fit-content;">
+      <i class="fas fa-circle-info" style="color: skyblue;"></i>
+      <span style="font-size: 0.95rem;">Please arrive 15 minutes before departure. E-ticket valid with ID.</span>
+    </div>
+  </div>
+
+  <!-- bottom actions (like signup / help) -->
+  <div class="bottom-cta">
+    <p>
+      <i class="fas fa-download"></i>
+      Save or share your ticket
+    </p>
+    <div style="display: flex; gap: 12px;">
+      <a href="#" class="cta-btn"><i class="fas fa-envelope"></i> email</a>
+      <a href="{% url 'dashboard' %}" class="cta-btn" style="background: transparent; color: rgb(22,23,49); border:2px solid rgb(22,23,49);"><i class="fas fa-arrow-left"></i> dashboard</a>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <span><i class="fas fa-shield" style="color: skyblue;"></i> ticket protected</span>
+    <span><i class="fas fa-undo-alt" style="color: aquamarine;"></i> free cancellation until 2h before</span>
+  </div>
+
+</div>
+</body>
+</html>
