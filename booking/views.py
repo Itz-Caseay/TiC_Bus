@@ -31,10 +31,14 @@ def index(request):
 def agency_detail(request, agency_id):
     agency = get_object_or_404(Agency, id=agency_id)
     buses = agency.buses.all()
+    routes = Route.objects.filter(bus__agency=agency)
+    unique_agency_total_bus = buses.count()
     
     return render(request, "pages/agency-detail.html", {
-        "agency":agency,
-        "buses":buses
+        "agency": agency,
+        "buses": buses,
+        "routes": routes,
+        "unique_agency_total_bus": unique_agency_total_bus
     })
 
 # User logging system
