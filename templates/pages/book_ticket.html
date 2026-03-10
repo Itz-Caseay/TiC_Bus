@@ -1,0 +1,9 @@
+<h2>Book Ticket</h2>
+
+<p>{{ route.origin }} → {{ route.destination }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Book Seat</button>
+</form>

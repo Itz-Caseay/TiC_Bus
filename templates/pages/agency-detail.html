@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TiC BUS · agency directory</title>
+    <!-- Font Awesome 6 (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            width: 95%;
+        }
+
+        /* header exactly from original (TiC BUS style) */
+        .greeting {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            background: white;
+            padding: 1.2rem 2rem;
+            border-radius: 60px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(22, 23, 49, 0.05);
+        }
+
+        .greeting h1 {
+            font-weight: 600;
+            font-size: 1.9rem;
+            letter-spacing: -0.01em;
+        }
+
+        .greeting h1 .tic {
+            font-size: 2.2rem;
+            color: aquamarine;
+            text-shadow: 0 2px 5px rgba(127, 255, 212, 0.2);
+        }
+
+        .greeting h1 .bus {
+            font-size: 2.2rem;
+            color: skyblue;
+            text-shadow: 0 2px 5px rgba(135, 206, 235, 0.3);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgb(22, 23, 49);
+            color: white;
+            padding: 0.5rem 1.8rem 0.5rem 1.2rem;
+            border-radius: 50px;
+            box-shadow: 0 6px 12px rgba(22, 23, 49, 0.25);
+        }
+
+        .user-profile i {
+            font-size: 1.8rem;
+            color: aquamarine;
+        }
+
+        .user-profile .user-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .user-profile .name {
+            font-weight: 600;
+        }
+
+        .user-profile .badge {
+            background: #2f3a6b;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+        }
+
+        /* filter bar – remember me style */
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.8rem 0 2rem 0;
+            background: #ffffff;
+            padding: 0.7rem 1.5rem;
+            border-radius: 60px;
+            box-shadow: 0 0 0 1px rgba(22, 23, 49, 0.05);
+            flex-wrap: wrap;
+        }
+
+        .filter-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-left input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: rgb(22, 23, 49);
+        }
+
+        .filter-left span {
+            font-size: 0.95rem;
+            color: #2c3a57;
+        }
+
+        .filter-link {
+            color: skyblue;
+            font-weight: 500;
+            background: rgba(135, 206, 235, 0.1);
+            padding: 0.4rem 1.4rem;
+            border-radius: 40px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .filter-link:hover {
+            background: rgb(22, 23, 49);
+            color: white;
+        }
+
+        /* agency grid – each card is a full agency profile */
+        .agency-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2.2rem;
+            margin: 2rem 0 2.5rem;
+        }
+
+        /* agency card (expanded) */
+        .agency-card {
+            background: white;
+            border-radius: 48px;
+            padding: 2rem 2.2rem;
+            box-shadow: 0 20px 35px -12px rgba(22, 23, 49, 0.15);
+            border: 1px solid rgba(22, 23, 49, 0.05);
+            transition: 0.15s;
+        }
+
+        .agency-card:hover {
+            box-shadow: 0 25px 40px -14px rgb(22 23 49 / 25%);
+        }
+
+        /* top row: logo + identity + location & description */
+        .agency-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+            align-items: center;
+            margin-bottom: 1.8rem;
+        }
+
+        .agency-logo {
+            width: 110px;
+            height: 110px;
+            background: rgb(22, 23, 49);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid aquamarine;
+            box-shadow: 0 12px 18px -8px #16173180;
+        }
+
+        .agency-logo i {
+            font-size: 3.5rem;
+            color: white;
+        }
+
+        .agency-logo img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        /* alternate border for some cards */
+        .agency-card:nth-child(even) .agency-logo {
+            border-color: skyblue;
+        }
+
+        .agency-title {
+            flex: 2;
+            min-width: 240px;
+        }
+
+        .agency-name {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: rgb(22, 23, 49);
+            line-height: 1.2;
+            margin-bottom: 0.2rem;
+        }
+
+        .agency-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #2c3a57;
+            background: #eef2f8;
+            padding: 0.3rem 1.4rem;
+            border-radius: 60px;
+            width: fit-content;
+            margin: 0.5rem 0 0.75rem;
+            font-size: 1rem;
+        }
+
+        .agency-location i {
+            color: skyblue;
+        }
+
+        /* description paragraph */
+        .agency-description {
+            background: #f0f4fa;
+            padding: 1.2rem 1.5rem;
+            border-radius: 40px;
+            color: #1f2a44;
+            margin: 1.2rem 0 1.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border: 1px solid #d9e2ef;
+        }
+
+        /* management row: manager + CEO side by side (like two pills) */
+        .management-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+            margin: 1rem 0 1.8rem;
+        }
+
+        .manager-badge,
+        .ceo-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(22, 23, 49, 0.03);
+            padding: 0.6rem 1.8rem 0.6rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #d0dbe9;
+        }
+
+        .manager-badge i,
+        .ceo-badge i {
+            background: rgb(22, 23, 49);
+            color: aquamarine;
+            border-radius: 50%;
+            padding: 8px;
+            font-size: 1.2rem;
+        }
+
+        .ceo-badge i {
+            color: skyblue;
+        }
+
+        .manager-badge span,
+        .ceo-badge span {
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .manager-badge small,
+        .ceo-badge small {
+            color: #5f6c84;
+            font-size: 0.85rem;
+            margin-left: 4px;
+        }
+
+        /* bus fleet section: title and bus cards */
+        .fleet-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: rgb(22, 23, 49);
+            margin: 1.5rem 0 1.2rem;
+        }
+
+        .fleet-title i {
+            color: skyblue;
+            background: #ebf3ff;
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+        .bus-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .bus-item {
+            background: #f7faff;
+            border-radius: 60px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid #e2e8f2;
+            transition: 0.1s;
+        }
+
+        .bus-item:hover {
+            background: white;
+            border-color: rgb(22, 23, 49, 0.2);
+        }
+
+        .bus-icon {
+            background: rgb(22, 23, 49);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .bus-info {
+            flex: 1;
+        }
+
+        .bus-info h4 {
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bus-info p {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #475569;
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        .bus-info p i {
+            color: aquamarine;
+            width: 18px;
+        }
+
+        /* bottom CTA same as original (signup style) */
+        .bottom-cta {
+            margin-top: 2.5rem;
+            background: rgb(22, 23, 49);
+            border-radius: 80px;
+            padding: 1.3rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .bottom-cta p {
+            font-size: 1.2rem;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bottom-cta p i {
+            color: aquamarine;
+            font-size: 2.2rem;
+        }
+
+        .cta-btn {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 0.7rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cta-btn:hover {
+            background: white;
+            color: rgb(22, 23, 49);
+        }
+
+        .cta-btn i {
+            color: skyblue;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #6f7c94;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+
+        <!-- header – exactly as original but neutral -->
+        <div class="greeting">
+            <h1>
+                <span class="tic">T.I.C</span><span class="bus">BUS</span> · agency explorer
+            </h1>
+            <div class="user-profile">
+                <i class="fas fa-user-tie"></i>
+                <div class="user-text">
+                    <span class="name">{{request.user.username}}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- filter row (remember me style) -->
+        <div class="filter-bar">
+            <div class="filter-left">
+                <input type="checkbox" id="showActive" checked>
+                <span>Show agencies with active fleet</span>
+                <i class="fas fa-bus" style="color: skyblue;"></i>
+            </div>
+            <a href="#" class="filter-link"><i class="fas fa-map"></i> region filter</a>
+        </div>
+
+        <!-- AGENCY LIST – each card shows all required fields: name, logo, manager, ceo, location, description, plus buses with location -->
+        <div class="agency-grid">
+
+            <!-- AGENCY 1 -->
+            <div class="agency-card">
+                <div class="agency-header">
+                    <div class="agency-logo"><img src="{{agency.agency_logo.url}}"></div>
+                    <div class="agency-title">
+                        <div class="agency-name">{{agency.agency_name}}</div>
+                        <div class="agency-location"><i class="fas fa-map-pin"></i> {{agency.location}}</div>
+                    </div>
+                </div>
+                <div class="agency-description">
+                    <i class="fas fa-quote-left" style="color: aquamarine; margin-right: 6px;"></i>
+                    {{agency.agency_description}}
+                </div>
+                <!-- management: manager & CEO -->
+                <div class="management-row">
+                    <div class="manager-badge"><i class="fas fa-user-tie"></i> <span>{{agency.manager_name}}
+                            <small>manager</small></span></div>
+                    <div class="ceo-badge"><i class="fas fa-crown"></i> <span>{{agency.ceo_name}}
+                            <small>CEO</small></span></div>
+                </div>
+
+                <!-- fleet title -->
+                <div class="fleet-title"><i class="fas fa-bus"></i> Buses & current locations</div>
+                <div class="bus-list">
+
+                    {% for bus in buses %}
+
+                    <div class="bus-item">
+                        <div class="bus-icon"><i class="fas fa-bus-simple"></i></div>
+                        <div class="bus-info">
+                            <h4>{{bus.bus_number}} <span
+                                    style="font-size:0.8rem; background: #dcfce7; padding:2px 8px; border-radius: 60px;">active</span>
+                            </h4>
+                            <p><i class="fas fa-location-dot"></i> Grand Ave & 5th St</p>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            
+        </div>
+
+        <!-- bottom CTA (sign-up style) -->
+        <div class="bottom-cta">
+            <p>
+                <i class="fas fa-building"></i>
+                Explore more agencies or register your own.
+            </p>
+            <a href="#" class="cta-btn">
+                <i class="fas fa-arrow-right"></i> view all
+            </a>
+        </div>
+
+        <!-- tiny footer -->
+        <div class="footer-note">
+            <span><i class="fas fa-bus" style="color: skyblue;"></i> 4 agencies displayed</span>
+            <span><i class="fas fa-map" style="color: aquamarine;"></i> 12 buses on map</span>
+        </div>
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,228 @@
+{% comment %} <h1>{{agency.agency_name}}</h1>
+<p>Location: {{ agency.location }}</p>
+
+<h2>Buses</h2>
+<table border="1">
+    <tr>
+        <th>Bus Number</th>
+        <th>Capacity</th>
+        <th>Destination</th>
+    </tr>
+
+
+    {% for bus in buses %}
+    <tr>
+        <td> {{bus.bus_number}} </td>
+        <td> {{bus.total_seats}} </td>
+        <td> {{bus.destination}} </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+```html {% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TiCBus - Agency Details</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f4f4;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            height: 70px;
+            background: rgb(22, 23, 49);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            color: white;
+        }
+
+        .navbar .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .navbar .logo span:first-child {
+            color: aquamarine;
+        }
+
+        .navbar .logo span:last-child {
+            color: skyblue;
+        }
+
+        .navbar .search input {
+            height: 35px;
+            border: none;
+            border-radius: 20px;
+            padding: 0 15px;
+            outline: none;
+        }
+
+        /* CONTAINER */
+        .container {
+            padding: 40px;
+        }
+
+        /* AGENCY HEADER */
+        .agency-header {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .agency-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-right: 25px;
+        }
+
+        .agency-logo img{
+            height: 100%;
+        }
+
+        .agency-details h2 {
+            color: rgb(22, 23, 49);
+            margin-bottom: 10px;
+        }
+
+        .agency-details p {
+            color: #555;
+            font-size: 16px;
+        }
+
+        /* BUSES LIST */
+        .buses-section h2 {
+            margin-bottom: 20px;
+            color: rgb(22, 23, 49);
+        }
+
+        .buses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .bus-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .bus-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .bus-card h3 {
+            color: rgb(22, 23, 49);
+            margin-bottom: 10px;
+        }
+
+        .bus-card p {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .bus-card button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            background: rgb(22, 23, 49);
+            color: white;
+            cursor: pointer;
+        }
+
+        .bus-card button:hover {
+            background: aquamarine;
+            color: black;
+        }
+
+        /* MOBILE */
+        @media(max-width:600px) {
+            .navbar {
+                flex-direction: column;
+                height: auto;
+                padding: 15px;
+                gap: 10px;
+            }
+
+            .agency-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .agency-logo {
+                margin: 0 0 15px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="logo"><span>T.I.C</span> <span>BUS</span></div>
+        <div class="search">
+            <input type="text" placeholder="Search buses...">
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+
+        <!-- AGENCY HEADER -->
+        <div class="agency-header">
+            <img src="{{agency.agency_logo.url}}" class="agency-logo" alt="Agency Logo">
+            <div class="agency-details">
+                <h2>{{agency.agency_name}}</h2>
+                <p>Location: {{ agency.location }}</p>
+            </div>
+        </div>
+
+        <!-- BUSES LIST -->
+        <div class="buses-section">
+            <h2>Available Buses</h2>
+            <div class="buses">
+            {% for bus in buses %}
+                
+
+                    <div class="bus-card">
+                        <h3>{{bus.bus_number}}</h3>
+                        <p>Seats: {{bus.total_seats}}</p>
+                        <p>{{bus.destination}}</p>
+                        <button>View Seats</button>
+                    </div>
+
+                
+            {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
+{% comment %} ``` {% endcomment %}

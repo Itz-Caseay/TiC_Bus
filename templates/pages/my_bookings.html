@@ -1,0 +1,8 @@
+<h2>My Bookings</h2>
+
+{% for booking in bookings %}
+<p>
+{{ booking.route.origin }} → {{ booking.route.destination }}
+Seat: {{ booking.seat_number }}
+</p>
+{% endfor %}
