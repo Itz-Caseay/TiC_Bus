@@ -79,8 +79,8 @@ def signup(request):
         password2 = request.POST.get('password2')
         
         if password == password2:
-            if User.objects.filter(email=email).exists():
-                messages.error(request, "Email already taken use another email")
+            if User.objects.filter(email=email, username=username).exists():
+                messages.error(request, "Username or Email already taken use another email")
                 return redirect('signup')
             
             else:
