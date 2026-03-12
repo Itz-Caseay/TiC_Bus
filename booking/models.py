@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
+from django.utils import timezone
 
 # Create your models here.
 
@@ -53,6 +54,7 @@ class Route(models.Model):
     departure_time = models.TimeField()
     price = models.DecimalField(max_digits=8, decimal_places=0)
     bus = models.ForeignKey(Bus, on_delete=models.CASCADE)
+    duration = models.IntegerField(default=1)
     
     def __str__(self):
         return f"{self.origin} -> {self.destination} using Bus {self.bus.bus_number} at {self.departure_time}"
@@ -60,9 +62,10 @@ class Route(models.Model):
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
-    date = models.DateField()
+    date = models.DateField(default=timezone.now)
     seat_number = models.IntegerField()
     booking_date = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"{self.user} -> {self.route}"
+    

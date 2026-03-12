@@ -134,7 +134,6 @@ def my_bookings(request):
 
 
 @login_required(login_url='login')
-@login_required(login_url='login')
 def book_bus(request, route_id):
 
     route = get_object_or_404(Route, id=route_id)
@@ -142,21 +141,28 @@ def book_bus(request, route_id):
 
     seats = range(1, bus.total_seats + 1)
 
-    booked_seats = Booking.objects.filter(route=route).values_list('seat_number', flat=True)
-
     if request.method == "POST":
-        seat_number = request.POST.get("seat_number")
-        date = request.POST.get('date')
+        seat_number = int(request.POST.get("seat_number"))
+        date = request.POST.get("date")
 
+        # get booked seats for that route and date
+        booked_seats = Booking.objects.filter(
+            route=route,
+            date=date
+        ).values_list('seat_number', flat=True)
+
+        # prevent double booking
         if seat_number in booked_seats:
-            return render(request, "pages/book_bus.html", {
+            context = {
                 "route": route,
                 "bus": bus,
                 "seats": seats,
                 "booked_seats": booked_seats,
-                "error": "Seat already booked"
-            })
+                "error": "Seat already booked for this date."
+            }
+            return render(request, "pages/book_bus.html", context)
 
+        # create booking
         Booking.objects.create(
             user=request.user,
             route=route,
@@ -165,6 +171,9 @@ def book_bus(request, route_id):
         )
 
         return redirect("ticket")
+
+    # GET request
+    booked_seats = Booking.objects.filter(route=route).values_list('seat_number', flat=True)
 
     context = {
         "route": route,

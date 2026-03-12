@@ -9,5 +9,5 @@ urlpatterns = [
     path('my-bookings/', my_bookings, name='my_bookings'),
     path('agency/<int:agency_id>/', agency_detail, name="agency_detail"),
     path("book/<int:route_id>/", book_bus, name="book_bus"),
-    path("tickeet", ticket, name="ticket"),
+    path("ticket", ticket, name="ticket"),
 ]
