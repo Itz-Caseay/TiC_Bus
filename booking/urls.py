@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index, login_user, logout_user, signup, my_bookings, agency_detail, book_bus
+from .views import index, login_user, logout_user, signup, my_bookings, agency_detail, book_bus, ticket
 
 urlpatterns = [
     path('index/', index, name="index"),
@@ -9,4 +9,5 @@ urlpatterns = [
     path('my-bookings/', my_bookings, name='my_bookings'),
     path('agency/<int:agency_id>/', agency_detail, name="agency_detail"),
     path("book/<int:route_id>/", book_bus, name="book_bus"),
+    path("tickeet", ticket, name="ticket"),
 ]

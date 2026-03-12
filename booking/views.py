@@ -71,32 +71,32 @@ def login_user(request):
 # User registration system
 
 def signup(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         username = request.POST.get('username')
         fullname = request.POST.get('fullname')
         email = request.POST.get('email')
         password = request.POST.get('password')
         password2 = request.POST.get('password2')
         
-        if password == password2:
+        if password==password2:
             if User.objects.filter(email=email, username=username).exists():
-                messages.error(request, "Username or Email already taken use another email")
+                messages.error(request, "Email or Username already taken use another email")
                 return redirect('signup')
-            
             else:
-                user = User.objects.create_user(username=username, fullname=fullname, email=email, password=password)
+                user = User.objects.create_user(
+                    username=username,
+                    fullname=fullname,
+                    email=email,
+                    password=password
+                )
                 login(request, user)
-                messages.success(request, "Account successfully created")
                 profile = UserProfile.objects.create(user=user)
                 profile.save()
-                user.save()
                 return redirect('index')
-            
         else:
-            messages.error(request, "Passwords donot match retry")
+            messages.error(request, "Password didnot match")
             return redirect('signup')
-        
-    return render(request, 'auth/signup.html')
+    return render(request, "auth/signup.html")
 
 # User logout system
 @login_required(login_url='login')
@@ -130,29 +130,55 @@ def my_bookings(request):
     bookings = Booking.objects.filter(user=request.user)
     return render(request, 'pages/my_bookings.html', {'bookings': bookings})
 
+
+
+
+@login_required(login_url='login')
 @login_required(login_url='login')
 def book_bus(request, route_id):
 
     route = get_object_or_404(Route, id=route_id)
-
     bus = route.bus
 
-    if request.method == "POST":
+    seats = range(1, bus.total_seats + 1)
 
+    booked_seats = Booking.objects.filter(route=route).values_list('seat_number', flat=True)
+
+    if request.method == "POST":
         seat_number = request.POST.get("seat_number")
+        date = request.POST.get('date')
+
+        if seat_number in booked_seats:
+            return render(request, "pages/book_bus.html", {
+                "route": route,
+                "bus": bus,
+                "seats": seats,
+                "booked_seats": booked_seats,
+                "error": "Seat already booked"
+            })
 
         Booking.objects.create(
             user=request.user,
             route=route,
-            bus=bus,
-            seat_number=seat_number
+            seat_number=seat_number,
+            date=date
         )
 
-        return redirect("dashboard")
+        return redirect("ticket")
 
     context = {
         "route": route,
-        "bus": bus
+        "bus": bus,
+        "seats": seats,
+        "booked_seats": booked_seats
     }
 
     return render(request, "pages/book_bus.html", context)
+
+def ticket(request):
+    tickets = Booking.objects.filter(user=request.user).select_related('route')
+
+    context = {
+        "tickets": tickets
+    }
+    return render(request, "pages/ticket.html", context)

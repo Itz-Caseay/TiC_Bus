@@ -421,7 +421,7 @@
           </div>
           <div class="route-meta">
             <div class="meta-item"><i class="fas fa-clock"></i> Departure: <strong>{{ route.departure_time|default:"09:30" }}</strong></div>
-            <div class="meta-item"><i class="fas fa-stopwatch"></i> Duration: <strong>{{ route.duration|default:"35 min" }}</strong></div>
+            <div class="meta-item"><i class="fas fa-stopwatch"></i> Duration: <strong>{{ route.duration|default:"20 Hrs (minimum)" }}</strong></div>
             <div class="meta-item"><i class="fas fa-bus-simple"></i> Bus: <strong>{{ bus.bus_number|default:"CE-12" }} · {{ bus.model|default:"Volvo" }}</strong></div>
           </div>
         </div>
@@ -433,14 +433,21 @@
           <label><i class="fas fa-chair"></i> Choose your seat</label>
           <select name="seat_number" class="form-control" required>
             <option value="" disabled selected>– select a seat –</option>
-            <option value="1A">1A (window) - ${{ route.price|default:"12" }}</option>
-            <option value="1B">1B (aisle) - ${{ route.price|default:"12" }}</option>
-            <option value="2A">2A (window) - ${{ route.price|default:"12" }}</option>
-            <option value="2B">2B (aisle) - ${{ route.price|default:"12" }}</option>
-            <option value="3A">3A (extra legroom) - ${{ route.price|default:"15" }}</option>
-            <option value="3B">3B (extra legroom) - ${{ route.price|default:"15" }}</option>
-            <option value="4C">4C (center) - ${{ route.price|default:"12" }}</option>
-            <option value="5A">5A (window) - ${{ route.price|default:"12" }}</option>
+            {% for seat in seats %}
+
+            <option value="{{ seat }}"
+            {% if seat|stringformat:"s" in booked_seats %}
+            disabled
+            {% endif %}>
+
+            Seat {{ seat }}
+            {% if seat|stringformat:"s" in booked_seats %}
+            (Booked)
+            {% endif %}
+
+            </option>
+
+            {% endfor %}
           </select>
           <div class="seat-hint">
             <i class="fas fa-info-circle"></i> <span>You can select any available seat. Extra legroom seats may cost more.</span>
@@ -450,7 +457,7 @@
         <!-- optional: extra passenger info (you can keep minimal) -->
         <div class="form-group">
           <label><i class="fas fa-user"></i> Passenger name (optional)</label>
-          <input type="text" class="form-control" placeholder="Leave empty to use profile name" value="{{ request.user.get_full_name|default:request.user.username }}">
+          <input type="text" class="form-control" placeholder="Leave empty to use profile name" value="{{ request.user.get_full_name|default:request.user.fullname }}">
           <small style="color:#5f6c84; margin-left: 1rem;">Will be used for ticket</small>
         </div>
 

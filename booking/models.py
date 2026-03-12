@@ -60,6 +60,7 @@ class Route(models.Model):
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
+    date = models.DateField()
     seat_number = models.IntegerField()
     booking_date = models.DateTimeField(auto_now_add=True)
     

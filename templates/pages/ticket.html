@@ -373,7 +373,7 @@
       <i class="fas fa-circle-check"></i>
       <div class="user-text">
         <span class="name">{{ request.user.username|default:"Alex Chen" }}</span>
-        <span class="badge"><i class="fa-regular fa-credit-card"></i> booking confirmed</span>
+        
       </div>
     </div>
   </div>
@@ -386,10 +386,11 @@
     </div>
 
     <!-- journey: from → to -->
+     {% for ticket in tickets %}
     <div class="journey">
       <div class="location">
-        <div class="city">{{ route.origin|default:"Downtown" }}</div>
-        <div class="time"><i class="fas fa-clock"></i> {{ route.departure_time|default:"09:30" }} · {{ route.departure_date|default:"May 28, 2026" }}</div>
+        <div class="city">{{ ticket.route.origin|default:"Downtown" }}</div>
+        <div class="time"><i class="fas fa-clock"></i> {{ ticket.route.departure_time|default:"09:30" }} · {{ route.departure_date|default:"May 28, 2026" }}</div>
       </div>
       <div class="journey-arrow">
         <i class="fas fa-bus"></i>
@@ -400,14 +401,13 @@
         <div class="time"><i class="fas fa-clock"></i> {{ route.arrival_time|default:"10:05" }}</div>
       </div>
     </div>
-
     <!-- details grid: passenger, seat, bus, price, booking ref -->
     <div class="details-grid">
       <div class="detail-item">
         <div class="detail-icon"><i class="fas fa-user"></i></div>
         <div class="detail-content">
           <div class="detail-label">passenger</div>
-          <div class="detail-value">{{ request.user.get_full_name|default:"Alex Chen" }}</div>
+          <div class="detail-value">{{ request.user.fullname|default:"Alex Chen" }}</div>
         </div>
       </div>
       <div class="detail-item">
@@ -455,6 +455,9 @@
       </div>
       <button class="print-btn" onclick="window.print()"><i class="fas fa-print"></i> print ticket</button>
     </div>
+    {% empty %}
+      <p>No tickets</p>
+    {% endfor %}
 
     <!-- extra note (like remember me style) -->
     <div style="display: flex; align-items: center; gap: 10px; margin-top: 1.5rem; background: #f2f7ff; padding: 0.8rem 1.8rem; border-radius: 60px; width: fit-content;">
@@ -471,7 +474,7 @@
     </p>
     <div style="display: flex; gap: 12px;">
       <a href="#" class="cta-btn"><i class="fas fa-envelope"></i> email</a>
-      <a href="{% url 'dashboard' %}" class="cta-btn" style="background: transparent; color: rgb(22,23,49); border:2px solid rgb(22,23,49);"><i class="fas fa-arrow-left"></i> dashboard</a>
+      <a href="{% url 'index' %}" class="cta-btn" style="background: transparent; color: rgb(22,23,49); border:2px solid rgb(22,23,49);"><i class="fas fa-arrow-left"></i> dashboard</a>
     </div>
   </div>
 
